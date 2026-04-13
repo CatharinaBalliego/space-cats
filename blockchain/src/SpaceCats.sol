@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {ISpaceCats} from "./interfaces/ISpaceCats.sol";
+//import {ISpaceCats} from "./interfaces/ISpaceCats.sol";
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
-import "@openzeppelin/contracts/token/common/ERC2981.sol";
+import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
 
 /*
                                                                                                               
@@ -27,7 +26,7 @@ import "@openzeppelin/contracts/token/common/ERC2981.sol";
                                  
 */
 
-contract SpaceCats is ERC721URIStorage, ERC2981, ERC721Burnable, AccessControl, ISpaceCats {
+contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIStorage  {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     uint256 private _nextTokenId;
 
@@ -38,7 +37,7 @@ contract SpaceCats is ERC721URIStorage, ERC2981, ERC721Burnable, AccessControl, 
     {
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
         _grantRole(MINTER_ROLE, minter);
-        _setDefaultRoyalty(msg.sender, 500);
+        _setDefaultRoyalty(msg.sender, 350);
     }
 
     function safeMint(address to, string memory uri)
@@ -46,8 +45,7 @@ contract SpaceCats is ERC721URIStorage, ERC2981, ERC721Burnable, AccessControl, 
         onlyRole(MINTER_ROLE)
         returns (uint256)
     {
-        uint256 ts = totalSupply();
-        require(ts < MAX_SUPPLY, "Exceeded max tokens");
+        require(_nextTokenId < MAX_SUPPLY, "Exceeded max tokens");
 
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
@@ -69,7 +67,7 @@ contract SpaceCats is ERC721URIStorage, ERC2981, ERC721Burnable, AccessControl, 
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721URIStorage, AccessControl)
+        override(ERC721, ERC721URIStorage, AccessControl, ERC2981)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
