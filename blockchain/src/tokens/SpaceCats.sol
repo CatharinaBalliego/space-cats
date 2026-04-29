@@ -30,7 +30,6 @@ contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIS
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     uint256 private _nextTokenId;
 
-    uint64 public constant MAX_SUPPLY = 555;
 
     constructor(address defaultAdmin, address minter) 
     ERC721("SpaceCats", "SPC") 
@@ -45,8 +44,6 @@ contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIS
         onlyRole(MINTER_ROLE)
         returns (uint256)
     {
-        require(_nextTokenId < MAX_SUPPLY, "Exceeded max tokens");
-
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
