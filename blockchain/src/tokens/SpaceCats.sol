@@ -28,7 +28,10 @@ import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
 
 contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIStorage  {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant GAME_ENGINE = keccak256("GAME_ENGINE");
     uint256 private _nextTokenId;
+
+    mapping(uint256 => bool) public isLocked;
 
 
     constructor(address defaultAdmin) 
@@ -36,6 +39,19 @@ contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIS
     {
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
         _setDefaultRoyalty(msg.sender, 350);
+    }
+
+    function lockCat(uint256 id) external onlyRole(GAME_ENGINE) {
+        isLocked[id] = true;
+    }
+    
+    function unlockCat(uint256 id) external onlyRole(GAME_ENGINE) {
+        isLocked[id] = false;
+    }
+
+    function _update(address to, uint256 tokenId, address auth) internal virtual override returns (address) {
+        require(!isLocked[tokenId], "The cat is currently under mission or in a spaceship");
+        return super._update(to, tokenId, auth);
     }
 
     function safeMint(address to, string memory uri)
@@ -68,6 +84,5 @@ contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIS
     {
         return super.supportsInterface(interfaceId);
     }
-
 
 }
