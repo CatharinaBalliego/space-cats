@@ -31,11 +31,10 @@ contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIS
     uint256 private _nextTokenId;
 
 
-    constructor(address defaultAdmin, address minter) 
+    constructor(address defaultAdmin) 
     ERC721("SpaceCats", "SPC") 
     {
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
-        _grantRole(MINTER_ROLE, minter);
         _setDefaultRoyalty(msg.sender, 350);
     }
 
