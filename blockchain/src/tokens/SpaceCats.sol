@@ -31,6 +31,9 @@ contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIS
     bytes32 public constant GAME_ENGINE = keccak256("GAME_ENGINE");
     uint256 private _nextTokenId;
 
+    uint64 public constant MAX_SUPPLY = 777;
+
+
     mapping(uint256 => bool) public isLocked;
 
 
@@ -59,6 +62,8 @@ contract SpaceCats is AccessControl, ERC2981, ERC721, ERC721Burnable, ERC721URIS
         onlyRole(MINTER_ROLE)
         returns (uint256)
     {
+        require(_nextTokenId < MAX_SUPPLY, "Exceeded max tokens");
+        
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
