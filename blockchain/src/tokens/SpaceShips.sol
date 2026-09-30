@@ -11,14 +11,15 @@ contract SpaceShips is AccessControl, ERC2981, ERC721, ERC721URIStorage {
     uint256 private _nextTokenId;
 
     uint64 public constant MAX_SUPPLY = 555;
-
-    constructor(address defaultAdmin, address minter) 
-    ERC721("SpaceCats", "SPC") 
+    
+    constructor(address defaultAdmin) 
+    ERC721("SpaceShips", "SPCS") 
     {
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
-        _grantRole(MINTER_ROLE, minter);
         _setDefaultRoyalty(msg.sender, 350);
     }
+
+    //TO DO add functions to lock and unlock ship sale when on mission
 
     function safeMint(address to, string memory uri)
         public
@@ -32,7 +33,7 @@ contract SpaceShips is AccessControl, ERC2981, ERC721, ERC721URIStorage {
         _setTokenURI(tokenId, uri);
         return tokenId;
     }
-
+    
     // The following functions are overrides required by Solidity.
 
     function tokenURI(uint256 tokenId)
